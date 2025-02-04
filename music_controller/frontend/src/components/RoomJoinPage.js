@@ -42,11 +42,11 @@ export default class RoomJoinPage extends Component {
     // }});
     fetch("/api/join-room", requestOptions)
       .then((response) => {
-        // if (response.ok) {
-        //   return response.json();
-        // } else {
-        //   throw new Error("Room not found");
-        // }
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error("Room not found");
+        }
       })
       .then((data) => {
         this.setState({ redirect: "/room/" + this.state.roomCode });
@@ -65,7 +65,7 @@ export default class RoomJoinPage extends Component {
     return (
       <Grid container spacing={1}>
         <Grid item xs={12} align="center">
-          <Typography variant="h7" component="h7">
+          <Typography variant="h4" component="h4">
             Join a Room
           </Typography>
           </Grid>

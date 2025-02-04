@@ -1,3 +1,6 @@
+myenv/
+notes
+music_controller/spotify/credentials.py
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -7,7 +10,6 @@ __pycache__/
 *.so
 # Node.js stuff
 node_modules/
-
 # Distribution / packaging
 .Python
 build/

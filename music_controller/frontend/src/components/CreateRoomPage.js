@@ -16,7 +16,6 @@ export default class CreateRoomPage extends Component {
     votesToSkip: 2,
     guestCanPause: true,
     update: false,
-    roomCode: "", // Ensure roomCode is initialized properly
     //roomCode: '9F8BH7',
     // hard code check was not updating room code
     updateCallback: () => {},
@@ -29,8 +28,8 @@ export default class CreateRoomPage extends Component {
       votesToSkip: this.props.votesToSkip,
       errorMsg: "",
       successMsg: "",
-      //roomCode: null,
-      roomCode: this.props.roomCode || null, // Set roomCode from props if updating
+      roomCode: null,
+      //roomCode: this.props.roomCode || null, // Set roomCode from props if updating
       redirect: null, // Add a state variable for redirection
     };
     this.handleGuestCanPauseChange = this.handleGuestCanPauseChange.bind(this);
@@ -63,23 +62,40 @@ export default class CreateRoomPage extends Component {
     fetch("/api/create-room", requestOptions)
       .then((response) => response.json())
       .then((data) => {
-        this.setState({ roomCode: data.code, redirect: "/room/" + data.code });
+        this.setState({ 
+        roomCode: data.code,
+        redirect: "/room/" + data.code });
       });
     // Set the redirect state
   }
 
-  handleUpdateButtonPressed() {
-    const requestOptions = {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        votes_to_skip: this.state.votesToSkip,
-        guest_can_pause: this.state.guestCanPause,
-        code: this.state.roomCode,
-      }),
-    };
-    fetch("/api/update-room", requestOptions).then((response) => {
-      if (response.ok) {
+  async handleUpdateButtonPressed() {
+    try {
+      // Fetch the room code first
+      const response = await fetch("/api/user-in-room");
+      const data = await response.json();
+      this.setState({
+        roomCode: data.code,
+      });
+  
+      // Wait for the state to update
+      await new Promise(resolve => this.setState({ roomCode: data.code }, resolve));
+  
+      // Now, use the updated room code for the update request
+      const requestOptions = {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          votes_to_skip: this.state.votesToSkip,
+          guest_can_pause: this.state.guestCanPause,
+          code: this.state.roomCode,
+        }),
+      };
+  
+      console.log("Room code before update:", this.state.roomCode);
+  
+      const updateResponse = await fetch("/api/update-room", requestOptions);
+      if (updateResponse.ok) {
         this.setState({
           successMsg: "Room updated successfully!",
         });
@@ -89,8 +105,14 @@ export default class CreateRoomPage extends Component {
         });
       }
       this.props.updateCallback();
-    });
+    } catch (error) {
+      console.error("Error updating room:", error);
+      this.setState({
+        errorMsg: "An unexpected error occurred.",
+      });
+    }
   }
+  
   renderCreateButtons() {
     return (
       <Grid container spacing={1}>

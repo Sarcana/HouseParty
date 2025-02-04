@@ -2,7 +2,13 @@ import React, { Component } from "react";
 import RoomJoinPage from "./RoomJoinPage";
 import CreateRoomPage from "./CreateRoomPage";
 import RoomWrapper from "./RoomWrapper";
-import { BrowserRouter as Router, Routes, Route, Link, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Link,
+  Navigate,
+} from "react-router-dom";
 import { Grid, Button, Typography, ButtonGroup } from "@mui/material";
 
 export default class App extends Component {
@@ -13,15 +19,15 @@ export default class App extends Component {
     };
   }
 
-  async componentDidMount() {
-    fetch("/api/user-in-room")
-      .then((response) => response.json())
-      .then((data) => {
-        this.setState({
-          roomCode: data.code,
-        });
-      });
-  }
+  // async componentDidMount() {
+  //   fetch("/api/user-in-room")
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       this.setState({
+  //         roomCode: data.code,
+  //       });
+  //     });
+  // }
 
   renderHomePage = () => {
     return (
