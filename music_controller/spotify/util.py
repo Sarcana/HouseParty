@@ -10,7 +10,6 @@ BASE_URL = "https://api.spotify.com/v1/me/"
 
 def get_user_tokens(session_id):
     user_tokens = SpotifyToken.objects.filter(user=session_id)
-    print(user_tokens[0])
     if user_tokens.exists():
         return user_tokens[0]
     else:
@@ -30,7 +29,6 @@ def update_or_create_user_tokens(
         )  # ✅ Keep old refresh_token
         tokens.expires_in = expires_in
         tokens.token_type = token_type
-        print(tokens)
         tokens.save(
             update_fields=["access_token", "refresh_token", "expires_in", "token_type"]
         )
@@ -73,7 +71,7 @@ def refresh_spotify_token(session_id):
     access_token = response.get("access_token")
     token_type = response.get("token_type")
     expires_in = response.get("expires_in")
-    refresh_token = response.get("refresh_token")
+    # refresh_token = response.get("refresh_token") We are not actually receiving an actual token therefore we sent None value and hence we needed that fix of using or
     update_or_create_user_tokens(
         session_id, access_token, token_type, expires_in, refresh_token
     )
@@ -89,7 +87,7 @@ def execute_spotify_api_request(session_id, endpoint, post_=False, put_=False):
     if post_:
         post(BASE_URL + endpoint, headers=headers)
     if put_:
-        post(BASE_URL + endpoint, headers=headers)
+        put(BASE_URL + endpoint, headers=headers)
 
     response = get(BASE_URL + endpoint, headers=headers)
 
@@ -97,3 +95,15 @@ def execute_spotify_api_request(session_id, endpoint, post_=False, put_=False):
         return response.json()
     except:
         return {"Error": "Issue with request"}
+
+
+def play_song(session_id):
+    return execute_spotify_api_request(session_id, "player/play", put_=True)
+
+
+def pause_song(session_id):
+    return execute_spotify_api_request(session_id, "player/pause", put_=True)
+
+
+def skip_song(session_id):
+    return execute_spotify_api_request(session_id, "player/next", post_=True)

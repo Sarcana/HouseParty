@@ -3,11 +3,8 @@ import React from "react";
 import { Grid, Button, Typography } from "@mui/material";
 import { Navigate } from "react-router-dom";
 import CreateRoomPage from "./CreateRoomPage";
+import MusicPlayer from "./MusicPlayer";
 
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
 export default class Room extends Component {
   constructor(props) {
     super(props);
@@ -156,6 +153,7 @@ export default class Room extends Component {
             Code: {this.state.roomCode}
           </Typography>
         </Grid>
+        <MusicPlayer {...this.state.song} />
         {/* {this.state.song} */}
         {/* <Grid item xs={12} align="center">
           <Typography variant="h6" component="h6">

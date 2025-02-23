@@ -82,6 +82,7 @@ class JoinRoom(APIView):
     def post(self, request, format=None):
         if not self.request.session.exists(self.request.session.session_key):
             self.request.session.create()
+            print("ROom joined code is set")
 
         # in post request we can simply use .data
         code = request.data.get(self.lookup_url_kwarg)
@@ -90,8 +91,8 @@ class JoinRoom(APIView):
             room_result = Room.objects.filter(code=code)
             if room_result.exists():
                 room = room_result[0]
-                # Below line is usegful in the case when a person leaves the room and wants to rejoin without entering the code again
-                # self.request.session['room_code'] = code
+                # Below line is usegful in the case when a person leaves the room and wants to rejoin without entering the code again Not really we need to set the room code so that we van actually fetch the song
+                self.request.session["room_code"] = code
                 return Response({"message": "Room Joined!"}, status=status.HTTP_200_OK)
 
             return Response(
